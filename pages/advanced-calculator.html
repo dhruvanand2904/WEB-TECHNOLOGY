@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      min-height:100vh; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      background: #0a0a0f;
+      background-image: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,.15) 0%, transparent 60%);
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .back { position:fixed; top:1rem; left:1rem; font-size:.85rem; color:#666; text-decoration:none; }
+    .back:hover { color:#a5b4fc; }
+
+    .calc-wrapper {
+      background: linear-gradient(160deg, #1a1a2e, #12121f);
+      border: 1px solid rgba(99,102,241,.3);
+      border-radius: 20px;
+      padding: 1.5rem;
+      width: 320px;
+      box-shadow: 0 0 60px rgba(99,102,241,.15), 0 0 120px rgba(99,102,241,.05);
+    }
+    .calc-title {
+      font-family:'Orbitron',sans-serif;
+      font-size:.75rem; letter-spacing:.2em;
+      color:rgba(99,102,241,.7); text-align:center; margin-bottom:1rem;
+    }
+    .display {
+      background: #060610;
+      border: 1px solid rgba(99,102,241,.2);
+      border-radius:12px; padding:1rem 1.2rem;
+      margin-bottom:1rem;
+    }
+    .display .mode { font-size:.7rem; color:#4f46e5; letter-spacing:.1em; margin-bottom:.4rem; }
+    .display .expr { font-size:.8rem; color:#6366f1; min-height:1.2rem; text-align:right; margin-bottom:.3rem; }
+    .display .value {
+      font-size:2.2rem; text-align:right; color:#e0e7ff;
+      word-break:break-all;
+      text-shadow: 0 0 20px rgba(99,102,241,.5);
+    }
+    .tabs { display:flex; gap:.5rem; margin-bottom:1rem; }
+    .tab {
+      flex:1; padding:.4rem; border:1px solid rgba(99,102,241,.3);
+      border-radius:8px; background:none; color:#6366f1;
+      font-family:'Share Tech Mono',monospace; font-size:.8rem; cursor:pointer;
+      transition:all .2s;
+    }
+    .tab.active { background:#4f46e5; color:white; border-color:#4f46e5; }
+    .buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
+    .sci-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; margin-bottom:.5rem; }
+    button {
+      padding:.75rem .4rem; border:none; border-radius:10px;
+      font-family:'Share Tech Mono',monospace; font-size:.9rem; font-weight:bold;
+      cursor:pointer; transition:all .15s;
+    }
+    button:active { transform:scale(.92); }
+    .btn-num { background:rgba(255,255,255,.05); color:#e0e7ff; border:1px solid rgba(255,255,255,.07); }
+    .btn-num:hover { background:rgba(255,255,255,.1); }
+    .btn-op { background:rgba(99,102,241,.15); color:#a5b4fc; border:1px solid rgba(99,102,241,.2); }
+    .btn-op:hover { background:rgba(99,102,241,.25); }
+    .btn-eq { background:#4f46e5; color:white; grid-column:span 2; box-shadow:0 4px 20px rgba(79,70,229,.4); }
+    .btn-eq:hover { background:#6366f1; }
+    .btn-clear { background:rgba(239,68,68,.1); color:#f87171; border:1px solid rgba(239,68,68,.2); }
+    .btn-sci { background:rgba(139,92,246,.1); color:#c4b5fd; border:1px solid rgba(139,92,246,.2); font-size:.75rem; }
+    .btn-sci:hover { background:rgba(139,92,246,.2); }
+    .hidden { display:none; }
+    .history { margin-top:1rem; max-height:100px; overflow-y:auto; }
+    .history-item { font-size:.75rem; color:#4f46e5; padding:.2rem 0; border-bottom:1px solid rgba(99,102,241,.1); }
+  </style>
+</head>
+<body>
+  <a class="back" href="../index.html">← Back</a>
+  <div class="calc-wrapper">
+    <div class="calc-title">ADVANCED CALCULATOR v2.0</div>
+    <div class="display">
+      <div class="mode" id="mode-indicator">BASIC</div>
+      <div class="expr" id="expr"></div>
+      <div class="value" id="display">0</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="setMode('basic',this)">Basic</button>
+      <button class="tab" onclick="setMode('sci',this)">Scientific</button>
+    </div>
+
+    <!-- Scientific buttons -->
+    <div class="sci-buttons hidden" id="sci-panel">
+      <button class="btn-sci" onclick="sciOp('sin')">sin</button>
+      <button class="btn-sci" onclick="sciOp('cos')">cos</button>
+      <button class="btn-sci" onclick="sciOp('tan')">tan</button>
+      <button class="btn-sci" onclick="sciOp('log')">log</button>
+      <button class="btn-sci" onclick="sciOp('sqrt')">√</button>
+      <button class="btn-sci" onclick="sciOp('sq')">x²</button>
+      <button class="btn-sci" onclick="sciOp('inv')">1/x</button>
+      <button class="btn-sci" onclick="sciOp('pi')">π</button>
+    </div>
+
+    <!-- Main buttons -->
+    <div class="buttons">
+      <button class="btn-clear" onclick="clearAll()">AC</button>
+      <button class="btn-op" onclick="toggleSign()">+/-</button>
+      <button class="btn-op" onclick="percent()">%</button>
+      <button class="btn-op" onclick="op('/')">÷</button>
+      <button class="btn-num" onclick="num(7)">7</button>
+      <button class="btn-num" onclick="num(8)">8</button>
+      <button class="btn-num" onclick="num(9)">9</button>
+      <button class="btn-op" onclick="op('*')">×</button>
+      <button class="btn-num" onclick="num(4)">4</button>
+      <button class="btn-num" onclick="num(5)">5</button>
+      <button class="btn-num" onclick="num(6)">6</button>
+      <button class="btn-op" onclick="op('-')">−</button>
+      <button class="btn-num" onclick="num(1)">1</button>
+      <button class="btn-num" onclick="num(2)">2</button>
+      <button class="btn-num" onclick="num(3)">3</button>
+      <button class="btn-op" onclick="op('+')">+</button>
+      <button class="btn-num" style="grid-column:span 2" onclick="num(0)">0</button>
+      <button class="btn-num" onclick="dot()">.</button>
+      <button class="btn-eq" onclick="equals()">=</button>
+    </div>
+
+    <div class="history" id="history"></div>
+  </div>
+
+  <script>
+    let current='0', prevValue=null, operator=null, fresh=false, history=[];
+    const disp = () => {
+      let v = current;
+      if (!isNaN(v) && v.length > 12) v = parseFloat(v).toExponential(4);
+      document.getElementById('display').textContent = v;
+    };
+    const expr = t => document.getElementById('expr').textContent = t;
+
+    function num(n) {
+      if (fresh){current='';fresh=false;}
+      current = current==='0' ? String(n) : current+n; disp();
+    }
+    function dot() {
+      if (fresh){current='0';fresh=false;}
+      if(!current.includes('.')) current+='.'; disp();
+    }
+    function clearAll(){current='0';prevValue=null;operator=null;fresh=false;disp();expr('');}
+    function toggleSign(){current=String(-parseFloat(current));disp();}
+    function percent(){current=String(parseFloat(current)/100);disp();}
+    function op(o){
+      prevValue=parseFloat(current);operator=o;fresh=true;
+      expr(`${prevValue} ${o==='*'?'×':o==='/'?'÷':o}`);
+    }
+    function equals(){
+      if(!operator||prevValue===null)return;
+      const b=parseFloat(current);
+      let r;
+      if(operator==='+') r=prevValue+b;
+      else if(operator==='-') r=prevValue-b;
+      else if(operator==='*') r=prevValue*b;
+      else if(operator==='/') r=b!==0?prevValue/b:'Error';
+      const entry=`${prevValue} ${operator==='*'?'×':operator==='/'?'÷':operator} ${b} = ${r}`;
+      expr(entry);
+      addHistory(entry);
+      current=String(r);operator=null;prevValue=null;fresh=true;disp();
+    }
+    function sciOp(op){
+      let v=parseFloat(current),r;
+      if(op==='sin') r=Math.sin(v*Math.PI/180);
+      else if(op==='cos') r=Math.cos(v*Math.PI/180);
+      else if(op==='tan') r=Math.tan(v*Math.PI/180);
+      else if(op==='log') r=Math.log10(v);
+      else if(op==='sqrt') r=Math.sqrt(v);
+      else if(op==='sq') r=v*v;
+      else if(op==='inv') r=1/v;
+      else if(op==='pi') r=Math.PI;
+      const entry=`${op}(${current}) = ${r}`;
+      expr(entry); addHistory(entry);
+      current=String(parseFloat(r.toFixed(10)));fresh=true;disp();
+    }
+    function addHistory(e){
+      history.unshift(e);
+      if(history.length>5) history.pop();
+      document.getElementById('history').innerHTML=history.map(h=>`<div class="history-item">${h}</div>`).join('');
+    }
+    function setMode(m,btn){
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('sci-panel').classList.toggle('hidden',m==='basic');
+      document.getElementById('mode-indicator').textContent=m==='basic'?'BASIC':'SCIENTIFIC';
+    }
+  </script>
+</body>
+</html>

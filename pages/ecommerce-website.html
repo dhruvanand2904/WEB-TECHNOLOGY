@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus Shop — E-Commerce</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    :root { --bg:#f8f9fa; --dark:#111; --accent:#2563eb; --red:#ef4444; --border:#e5e7eb; }
+    body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(--dark); }
+
+    /* Nav */
+    nav {
+      background:white; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:.9rem 2rem; position:sticky; top:0; z-index:99;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+    nav .logo { font-size:1.4rem; font-weight:700; color:var(--accent); }
+    nav .nav-links { display:flex; gap:1.5rem; }
+    nav .nav-links a { text-decoration:none; color:#555; font-size:.9rem; font-weight:500; }
+    nav .nav-links a:hover { color:var(--accent); }
+    nav .cart-btn {
+      background:var(--accent); color:white;
+      border:none; padding:.5rem 1.2rem; border-radius:8px;
+      cursor:pointer; font-family:inherit; font-weight:700; font-size:.85rem;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .back-link { display:inline-block; padding:.5rem 2rem; font-size:.85rem; color:#888; text-decoration:none; }
+    .back-link:hover { color:var(--accent); }
+
+    /* Hero banner */
+    .banner {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color:white; padding:3.5rem 2rem; text-align:center;
+    }
+    .banner h1 { font-size:clamp(1.8rem,4vw,3rem); margin-bottom:.5rem; }
+    .banner p { opacity:.8; font-size:1rem; }
+    .banner .cta {
+      display:inline-block; margin-top:1.5rem;
+      background:white; color:var(--accent);
+      padding:.7rem 2rem; border-radius:8px; font-weight:700;
+      text-decoration:none; transition: transform .2s;
+    }
+    .banner .cta:hover { transform:scale(1.04); }
+
+    /* Filters */
+    .filters {
+      max-width:1200px; margin:0 auto; padding:1.5rem 2rem;
+      display:flex; gap:.7rem; flex-wrap:wrap;
+    }
+    .filter-btn {
+      padding:.4rem 1rem; border:1px solid var(--border);
+      background:white; border-radius:99px;
+      cursor:pointer; font-family:inherit; font-size:.85rem;
+      transition: background .15s, color .15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background:var(--accent); color:white; border-color:var(--accent);
+    }
+
+    /* Products */
+    .products {
+      max-width:1200px; margin:0 auto;
+      padding:0 2rem 3rem;
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.5rem;
+    }
+    .product-card {
+      background:white; border:1px solid var(--border);
+      border-radius:12px; overflow:hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .product-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+    .product-img {
+      height:160px; display:flex; align-items:center; justify-content:center;
+      font-size:4rem; background:#f1f5f9;
+    }
+    .product-body { padding:1rem; }
+    .product-body h3 { font-size:.95rem; margin-bottom:.3rem; }
+    .product-body .stars { font-size:.8rem; color:#f59e0b; margin-bottom:.3rem; }
+    .product-body .price { font-size:1.2rem; font-weight:700; color:var(--accent); }
+    .product-body .old-price { font-size:.8rem; color:#999; text-decoration:line-through; margin-left:.4rem; }
+    .product-body .add-btn {
+      width:100%; margin-top:.8rem; padding:.6rem;
+      background:var(--accent); color:white; border:none;
+      border-radius:8px; cursor:pointer; font-family:inherit;
+      font-weight:700; font-size:.85rem; transition: background .2s;
+    }
+    .product-body .add-btn:hover { background:#1d4ed8; }
+
+    /* Cart sidebar */
+    .cart-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.4);
+      z-index:200; display:none;
+    }
+    .cart-overlay.open { display:block; }
+    .cart-panel {
+      position:fixed; right:0; top:0; bottom:0;
+      width:360px; background:white;
+      box-shadow:-4px 0 24px rgba(0,0,0,.15);
+      padding:1.5rem; overflow-y:auto;
+      transform:translateX(100%); transition:transform .3s;
+    }
+    .cart-overlay.open .cart-panel { transform:none; }
+    .cart-panel h2 { margin-bottom:1rem; display:flex; justify-content:space-between; }
+    .cart-panel h2 button { background:none; border:none; cursor:pointer; font-size:1.2rem; }
+    .cart-item {
+      display:flex; align-items:center; gap:1rem;
+      padding:.8rem 0; border-bottom:1px solid var(--border);
+    }
+    .cart-item .ci-icon { font-size:2rem; background:#f1f5f9; width:50px; height:50px; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+    .cart-item .ci-name { font-size:.9rem; font-weight:500; }
+    .cart-item .ci-price { font-size:.85rem; color:var(--accent); font-weight:700; }
+    .cart-item .ci-remove { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--red); font-size:1rem; }
+    .cart-total { padding:1rem 0; font-weight:700; font-size:1.1rem; }
+    .checkout-btn {
+      width:100%; padding:.8rem; background:var(--accent); color:white;
+      border:none; border-radius:8px; cursor:pointer; font-family:inherit;
+      font-size:1rem; font-weight:700; transition:background .2s;
+    }
+    .checkout-btn:hover { background:#1d4ed8; }
+
+    footer { background:var(--dark); color:rgba(255,255,255,.5); text-align:center; padding:1.5rem; font-size:.85rem; }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="../index.html">← Back to Gallery</a>
+
+  <nav>
+    <div class="logo">⚡ Nexus</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Products</a>
+      <a href="#">Deals</a>
+      <a href="#">About</a>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
+  </nav>
+
+  <div class="banner">
+    <h1>Tech Essentials, Delivered Fast</h1>
+    <p>Premium gadgets at unbeatable prices</p>
+    <a href="#products" class="cta">Shop Now →</a>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Audio</button>
+    <button class="filter-btn">Peripherals</button>
+    <button class="filter-btn">Accessories</button>
+    <button class="filter-btn">Wearables</button>
+  </div>
+
+  <div class="products" id="products">
+    <div class="product-card">
+      <div class="product-img">🎧</div>
+      <div class="product-body">
+        <h3>Wireless Headphones Pro</h3>
+        <div class="stars">★★★★★ (128)</div>
+        <span class="price">$79.99</span><span class="old-price">$99.99</span>
+        <button class="add-btn" onclick="addToCart('Wireless Headphones', 79.99)">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">⌨️</div>
+      <div class="product-body">
+        <h3>Mechanical Keyboard RGB</h3>
+        <div class="stars">★★★★☆ (84)</div>
+        <span class="price">$129.99</span>
+        <button class="add-btn" onclick="addToCart('Mechanical Keyboard', 129.99)">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">🖱️</div>
+      <div class="product-body">
+        <h3>Ergonomic Mouse</h3>
+        <div class="stars">★★★★★ (312)</div>
+        <span class="price">$49.99</span><span class="old-price">$65.00</span>
+        <button class="add-btn" onclick="addToCart('Ergonomic Mouse', 49.99)">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">🔌</div>
+      <div class="product-body">
+        <h3>USB-C Hub 7-in-1</h3>
+        <div class="stars">★★★★☆ (201)</div>
+        <span class="price">$39.99</span>
+        <button class="add-btn" onclick="addToCart('USB-C Hub', 39.99)">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">⌚</div>
+      <div class="product-body">
+        <h3>Smartwatch Series X</h3>
+        <div class="stars">★★★★★ (560)</div>
+        <span class="price">$199.99</span><span class="old-price">$249.00</span>
+        <button class="add-btn" onclick="addToCart('Smartwatch', 199.99)">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-img">📦</div>
+      <div class="product-body">
+        <h3>Portable SSD 1TB</h3>
+        <div class="stars">★★★★☆ (95)</div>
+        <span class="price">$89.99</span>
+        <button class="add-btn" onclick="addToCart('Portable SSD', 89.99)">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cart-overlay" onclick="handleOverlayClick(event)">
+    <div class="cart-panel" id="cart-panel">
+      <h2>Your Cart <button onclick="toggleCart()">✕</button></h2>
+      <div id="cart-items"></div>
+      <div class="cart-total" id="cart-total"></div>
+      <button class="checkout-btn" onclick="alert('Order placed! 🎉')">Checkout</button>
+    </div>
+  </div>
+
+  <footer>&copy; 2024 Nexus Shop. All rights reserved.</footer>
+
+  <script>
+    let cart = [];
+    function addToCart(name, price) {
+      const existing = cart.find(i => i.name === name);
+      if (existing) existing.qty++;
+      else cart.push({ name, price, qty: 1 });
+      renderCart();
+    }
+    function removeFromCart(name) {
+      cart = cart.filter(i => i.name !== name);
+      renderCart();
+    }
+    function renderCart() {
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
+      document.getElementById('cart-items').innerHTML = cart.length === 0
+        ? '<p style="color:#999;text-align:center;padding:2rem 0;">Your cart is empty</p>'
+        : cart.map(i => `<div class="cart-item">
+            <div class="ci-icon">🛍️</div>
+            <div><div class="ci-name">${i.name} ×${i.qty}</div><div class="ci-price">$${(i.price*i.qty).toFixed(2)}</div></div>
+            <button class="ci-remove" onclick="removeFromCart('${i.name}')">🗑</button>
+          </div>`).join('');
+      document.getElementById('cart-total').innerHTML = cart.length
+        ? `Total: $${total.toFixed(2)}` : '';
+    }
+    function toggleCart() {
+      document.getElementById('cart-overlay').classList.toggle('open');
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('cart-overlay')) toggleCart();
+    }
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+      });
+    });
+    renderCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudEx — Student Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --bg:#fafafa; --accent:#7c3aed; --accent2:#ec4899; --card:white; --border:#e5e7eb; --text:#111; --muted:#6b7280; }
+    body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+    .back { display:inline-block; padding:1rem 2rem; font-size:.85rem; color:var(--muted); text-decoration:none; }
+    .back:hover { color:var(--accent); }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color:white; padding:2.5rem 2rem 2rem; text-align:center;
+      position:relative; overflow:hidden;
+    }
+    header::before {
+      content:'👨‍💻'; font-size:8rem; position:absolute;
+      right:-1rem; bottom:-2rem; opacity:.1; line-height:1;
+    }
+    header h1 { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; }
+    header p { opacity:.9; margin-top:.3rem; font-size:1rem; }
+    .search-bar {
+      display:flex; gap:.5rem; max-width:500px; margin:1.5rem auto 0;
+    }
+    .search-bar input {
+      flex:1; padding:.7rem 1.2rem; border-radius:99px; border:none;
+      font-family:inherit; font-size:.9rem; outline:none;
+    }
+    .search-bar button {
+      padding:.7rem 1.4rem; background:white; color:var(--accent);
+      border:none; border-radius:99px; font-family:inherit;
+      font-weight:700; cursor:pointer; transition:all .2s;
+    }
+    .search-bar button:hover { background:#f3e8ff; }
+
+    /* Stats */
+    .stats {
+      display:flex; justify-content:center; gap:2rem;
+      max-width:700px; margin:2rem auto; padding:0 2rem; flex-wrap:wrap;
+    }
+    .stat { text-align:center; }
+    .stat .number { font-size:1.8rem; font-weight:800; color:var(--accent); }
+    .stat .label { font-size:.8rem; color:var(--muted); }
+
+    /* Category tabs */
+    .cats { display:flex; gap:.5rem; max-width:1100px; margin:0 auto; padding:.5rem 2rem 1rem; flex-wrap:wrap; }
+    .cat {
+      padding:.4rem 1rem; border:1.5px solid var(--border);
+      border-radius:99px; cursor:pointer; font-family:inherit;
+      font-size:.85rem; font-weight:700; transition:all .2s; background:white;
+    }
+    .cat.active, .cat:hover { background:var(--accent); color:white; border-color:var(--accent); }
+
+    /* Listings grid */
+    .grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:1.5rem; max-width:1100px; margin:0 auto; padding:0 2rem 3rem;
+    }
+    .listing {
+      background:white; border:1px solid var(--border); border-radius:16px;
+      overflow:hidden; transition:transform .2s, box-shadow .2s;
+    }
+    .listing:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+    .listing-img {
+      height:140px; display:flex; align-items:center; justify-content:center;
+      font-size:4rem; position:relative;
+    }
+    .listing-badge {
+      position:absolute; top:.6rem; right:.6rem;
+      background:var(--accent); color:white; font-size:.7rem; font-weight:700;
+      padding:.2rem .6rem; border-radius:99px;
+    }
+    .listing-badge.service { background:var(--accent2); }
+    .listing-body { padding:1rem 1.2rem; }
+    .listing-body h3 { font-size:.95rem; font-weight:700; margin-bottom:.2rem; }
+    .listing-body .seller {
+      display:flex; align-items:center; gap:.4rem;
+      font-size:.8rem; color:var(--muted); margin-bottom:.5rem;
+    }
+    .avatar { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:white; }
+    .listing-body .desc { font-size:.82rem; color:#555; margin-bottom:.8rem; line-height:1.5; }
+    .listing-footer { display:flex; align-items:center; justify-content:space-between; }
+    .price { font-size:1.1rem; font-weight:800; color:var(--accent); }
+    .price.free { color:#16a34a; }
+    .contact-btn {
+      padding:.45rem 1rem; background:var(--accent); color:white;
+      border:none; border-radius:8px; font-family:inherit; font-size:.82rem;
+      font-weight:700; cursor:pointer; transition:background .2s;
+    }
+    .contact-btn:hover { background:#6d28d9; }
+
+    /* Post listing */
+    .post-section { max-width:700px; margin:2rem auto; padding:0 2rem; }
+    .post-card {
+      background:white; border:1px solid var(--border); border-radius:16px;
+      padding:1.5rem; box-shadow:0 2px 12px rgba(0,0,0,.05);
+    }
+    .post-card h2 { font-size:1.2rem; margin-bottom:1.2rem; }
+    .post-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    .post-group { display:flex; flex-direction:column; gap:.3rem; }
+    .post-group.full { grid-column:span 2; }
+    label { font-size:.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+    input, select, textarea {
+      padding:.6rem .9rem; border:1.5px solid var(--border); border-radius:8px;
+      font-family:inherit; font-size:.88rem;
+    }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); }
+    .post-btn {
+      width:100%; padding:.75rem; background:var(--accent); color:white;
+      border:none; border-radius:10px; font-family:inherit; font-size:1rem;
+      font-weight:700; cursor:pointer; transition:background .2s;
+    }
+    .post-btn:hover { background:#6d28d9; }
+
+    footer { text-align:center; padding:2rem; color:var(--muted); font-size:.85rem; }
+    @media(max-width:600px){ .post-row{grid-template-columns:1fr;} .post-group.full{grid-column:auto;} }
+  </style>
+</head>
+<body>
+  <a class="back" href="../index.html">← Back to Gallery</a>
+
+  <header>
+    <h1>📚 StudEx Marketplace</h1>
+    <p>Buy, sell, and trade with fellow students</p>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search listings…" oninput="filterListings()"/>
+      <button onclick="filterListings()">Search</button>
+    </div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="number" id="total-count">8</div><div class="label">Listings</div></div>
+    <div class="stat"><div class="number">142</div><div class="label">Students</div></div>
+    <div class="stat"><div class="number">$2.4k</div><div class="label">Traded This Month</div></div>
+  </div>
+
+  <div class="cats">
+    <button class="cat active" onclick="filterCat('all',this)">All</button>
+    <button class="cat" onclick="filterCat('books',this)">📗 Books</button>
+    <button class="cat" onclick="filterCat('electronics',this)">💻 Electronics</button>
+    <button class="cat" onclick="filterCat('services',this)">🛠 Services</button>
+    <button class="cat" onclick="filterCat('clothing',this)">👕 Clothing</button>
+    <button class="cat" onclick="filterCat('free',this)">🎁 Free</button>
+  </div>
+
+  <div class="grid" id="listings-grid"></div>
+
+  <!-- Post a listing -->
+  <div class="post-section">
+    <div class="post-card">
+      <h2>➕ Post a Listing</h2>
+      <div class="post-row">
+        <div class="post-group">
+          <label>Your Name</label>
+          <input type="text" id="p-name" placeholder="Jane Doe"/>
+        </div>
+        <div class="post-group">
+          <label>Category</label>
+          <select id="p-cat">
+            <option value="books">Books</option>
+            <option value="electronics">Electronics</option>
+            <option value="services">Services</option>
+            <option value="clothing">Clothing</option>
+            <option value="free">Free</option>
+          </select>
+        </div>
+        <div class="post-group full">
+          <label>Title</label>
+          <input type="text" id="p-title" placeholder="e.g. Calculus Textbook 3rd Edition"/>
+        </div>
+        <div class="post-group full">
+          <label>Description</label>
+          <textarea id="p-desc" placeholder="Describe your item or service…" rows="3"></textarea>
+        </div>
+        <div class="post-group">
+          <label>Price ($)</label>
+          <input type="number" id="p-price" placeholder="0 = Free" min="0"/>
+        </div>
+        <div class="post-group">
+          <label>Contact</label>
+          <input type="text" id="p-contact" placeholder="@telegram or email"/>
+        </div>
+      </div>
+      <button class="post-btn" onclick="postListing()">🚀 Post Listing</button>
+    </div>
+  </div>
+
+  <footer>StudEx &copy; 2024 · Student-powered marketplace</footer>
+
+  <script>
+    const avatarColors = ['#7c3aed','#ec4899','#2563eb','#16a34a','#d97706','#dc2626'];
+    const catIcons = { books:'📗', electronics:'💻', services:'🛠', clothing:'👕', free:'🎁' };
+    const catBgs  = { books:'#f0fdf4', electronics:'#eff6ff', services:'#fdf4ff', clothing:'#fff7ed', free:'#ecfdf5' };
+
+    let listings = [
+      { name:'Priya K.', cat:'books', title:'Engineering Mathematics Vol.2', desc:'Used once, excellent condition. Covers calculus, linear algebra, and stats.', price:12, contact:'@priyak' },
+      { name:'Rahul M.', cat:'electronics', title:'Laptop Charger 65W USB-C', desc:'Compatible with most laptops. Works perfectly, no longer need it.', price:8, contact:'rahul@uni.ac.in' },
+      { name:'Sara T.', cat:'services', title:'Python Tutoring (1hr)', desc:'2nd year CS student offering Python & data structures tutoring sessions.', price:15, contact:'@sara_codes' },
+      { name:'Dev P.', cat:'books', title:'Organic Chemistry Textbook', desc:'Morrison & Boyd, 6th Ed. Some highlighting. Great for exam prep.', price:10, contact:'devp@college.edu' },
+      { name:'Anita R.', cat:'clothing', title:'Lab Coat (Size M)', desc:'White lab coat, barely used. Perfect for science students.', price:5, contact:'@aniitar' },
+      { name:'Kiran S.', cat:'free', title:'Graph Paper Notebook (Free)', desc:'Extra notebook I don't need. Pick up from library. First come, first served!', price:0, contact:'kiran_s@uni.edu' },
+      { name:'Mohan L.', cat:'electronics', title:'Scientific Calculator (FX-991)', desc:'Casio FX-991 EX, all functions working. Comes with cover.', price:6, contact:'@mohanl' },
+      { name:'Fatima Z.', cat:'services', title:'CV & Resume Review', desc:'Business student offering professional CV review and improvement tips.', price:0, contact:'fatimaz@college.edu' },
+    ];
+
+    let currentCat = 'all';
+
+    function renderListings(data) {
+      document.getElementById('total-count').textContent = listings.length;
+      const grid = document.getElementById('listings-grid');
+      if(!data.length){ grid.innerHTML='<p style="text-align:center;color:#999;grid-column:1/-1;padding:2rem;">No listings found.</p>'; return; }
+      grid.innerHTML = data.map((l,i) => {
+        const col = avatarColors[i % avatarColors.length];
+        const initials = l.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+        const bg = catBgs[l.cat] || '#f9fafb';
+        const icon = catIcons[l.cat] || '📦';
+        const isFree = l.price === 0;
+        const isService = l.cat === 'services';
+        return `<div class="listing">
+          <div class="listing-img" style="background:${bg}">
+            ${icon}
+            <span class="listing-badge${isService?' service':''}">${isService?'Service':'For Sale'}</span>
+          </div>
+          <div class="listing-body">
+            <h3>${l.title}</h3>
+            <div class="seller">
+              <div class="avatar" style="background:${col}">${initials}</div>
+              ${l.name}
+            </div>
+            <p class="desc">${l.desc}</p>
+            <div class="listing-footer">
+              <span class="price${isFree?' free':''}">${isFree?'FREE':'$'+l.price}</span>
+              <button class="contact-btn" onclick="contact('${l.contact}')">Contact</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function filterListings() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      let data = currentCat === 'all' ? listings : listings.filter(l => l.cat === currentCat);
+      if(q) data = data.filter(l => l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q));
+      renderListings(data);
+    }
+
+    function filterCat(cat, btn) {
+      document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCat = cat;
+      filterListings();
+    }
+
+    function contact(c) { alert(`Contact seller: ${c}`); }
+
+    function postListing() {
+      const name = document.getElementById('p-name').value.trim();
+      const cat = document.getElementById('p-cat').value;
+      const title = document.getElementById('p-title').value.trim();
+      const desc = document.getElementById('p-desc').value.trim();
+      const price = parseInt(document.getElementById('p-price').value) || 0;
+      const contact = document.getElementById('p-contact').value.trim();
+      if(!name||!title||!desc) { alert('Please fill in name, title, and description.'); return; }
+      listings.unshift({ name, cat, title, desc, price, contact: contact||'N/A' });
+      filterListings();
+      ['p-name','p-title','p-desc','p-price','p-contact'].forEach(id=>document.getElementById(id).value='');
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    renderListings(listings);
+  </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PHP Calculator — Combined View</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #21262d;
+      --php: #8892BF; --php-dark: #4F5B93;
+      --accent: #00d4ff; --accent2: #ff6b35;
+      --text: #e6edf3; --muted: #8b949e;
+      --orange: #f97316; --orange-dark: #ea580c;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Space Grotesk', sans-serif; min-height: 100vh;
+    }
+
+    .php-banner {
+      background: linear-gradient(90deg, var(--php-dark), #6c7ab5);
+      text-align: center; padding: .4rem 1rem; font-size: .78rem;
+      color: rgba(255,255,255,.7); letter-spacing: .1em;
+    }
+    .php-banner strong { color: #c9d8f0; }
+
+    .back-link {
+      display: inline-block; padding: .7rem 2rem;
+      font-size: .85rem; color: var(--muted); text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    header {
+      text-align: center; padding: 2rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header .label {
+      display: inline-block; font-size: .7rem; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--php); background: rgba(137,146,191,.1);
+      padding: .3rem 1rem; border-radius: 99px; border: 1px solid rgba(137,146,191,.2);
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 700;
+      background: linear-gradient(135deg, #fff 30%, var(--php));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    header p { color: var(--muted); font-size: .95rem; margin-top: .5rem; }
+
+    /* Combined layout */
+    .combined {
+      max-width: 1100px; margin: 2.5rem auto; padding: 0 2rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    }
+    @media (max-width: 720px) { .combined { grid-template-columns: 1fr; } }
+
+    .calc-panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+    }
+    .panel-header {
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .panel-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .panel-header h2 { font-size: 1rem; font-weight: 700; margin-left: .3rem; }
+    .panel-header .tag {
+      margin-left: auto; background: rgba(137,146,191,.12);
+      color: var(--php); padding: .2rem .6rem; border-radius: 99px;
+      font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+      border: 1px solid rgba(137,146,191,.2);
+    }
+
+    /* ===== Simple Calculator ===== */
+    .simple-calc { padding: 1.5rem; }
+    .calc-display {
+      background: #000; border-radius: 12px; padding: 1.2rem 1.5rem;
+      text-align: right; margin-bottom: 1.2rem;
+    }
+    .calc-history { color: var(--muted); font-size: .8rem; min-height: 1.1rem; }
+    .calc-current { font-size: 2.2rem; font-weight: 700; margin-top: .3rem; color: white; word-break: break-all; }
+    .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+    .calc-btn {
+      background: #1c2128; border: 1px solid var(--border);
+      color: var(--text); padding: .85rem; border-radius: 10px;
+      font-size: 1rem; font-family: inherit; font-weight: 600;
+      cursor: pointer; transition: background .15s, transform .1s;
+    }
+    .calc-btn:hover { background: #252d37; }
+    .calc-btn:active { transform: scale(.95); }
+    .calc-btn.op { background: #1a1f2b; color: var(--orange); border-color: rgba(249,115,22,.3); }
+    .calc-btn.op:hover { background: rgba(249,115,22,.15); }
+    .calc-btn.equals { background: var(--orange); color: white; border-color: var(--orange-dark); }
+    .calc-btn.equals:hover { background: var(--orange-dark); }
+    .calc-btn.clear { background: rgba(239,68,68,.1); color: #ef4444; border-color: rgba(239,68,68,.3); }
+    .calc-btn.clear:hover { background: rgba(239,68,68,.2); }
+    .calc-btn.wide { grid-column: span 2; }
+
+    /* PHP snippet beneath simple calc */
+    .php-snippet {
+      margin-top: 1.2rem; background: #0d1117; border-radius: 10px;
+      padding: 1rem 1.2rem; font-family: 'Fira Code', monospace; font-size: .75rem;
+      color: #c9d8f0; border: 1px solid rgba(137,146,191,.15);
+    }
+    .php-snippet .tag { color: #a78bfa; }
+    .php-snippet .var { color: #7dd3fc; }
+    .php-snippet .str { color: #86efac; }
+    .php-snippet .kw { color: #f9a8d4; }
+    .php-snippet .cmt { color: #4b5563; font-style: italic; }
+
+    /* ===== Advanced / DB View ===== */
+    .db-panel { padding: 0; }
+    .db-toolbar {
+      background: #0f172a; padding: .7rem 1.2rem;
+      display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .db-toolbar-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .db-select {
+      background: #1e293b; border: 1px solid #334155; color: var(--text);
+      padding: .25rem .7rem; border-radius: 6px; font-size: .78rem;
+      font-family: inherit;
+    }
+    .db-btn {
+      background: #2563eb; color: white; border: none;
+      padding: .28rem .8rem; border-radius: 6px; font-size: .75rem;
+      cursor: pointer; font-family: inherit;
+    }
+    .db-flash {
+      background: rgba(74,222,128,.15); border: 1px solid rgba(74,222,128,.3);
+      color: #4ade80; padding: .4rem 1rem; font-size: .78rem;
+      margin: .8rem 1.2rem; border-radius: 6px;
+    }
+    .db-table-wrap { padding: .8rem 1.2rem; overflow-x: auto; }
+    .db-table {
+      width: 100%; border-collapse: collapse; font-size: .78rem;
+    }
+    .db-table th {
+      background: #0f172a; color: var(--muted); text-align: left;
+      padding: .5rem .8rem; border-bottom: 1px solid var(--border);
+      font-weight: 600; white-space: nowrap;
+    }
+    .db-table td {
+      padding: .45rem .8rem; border-bottom: 1px solid rgba(255,255,255,.04);
+      white-space: nowrap;
+    }
+    .db-table tr:hover td { background: rgba(255,255,255,.03); }
+    .db-table .check { color: #4ade80; }
+    .db-table .op-badge {
+      display: inline-block; padding: .15rem .5rem;
+      border-radius: 4px; font-weight: 700; font-size: .7rem;
+    }
+    .op-plus { background: rgba(74,222,128,.15); color: #4ade80; }
+    .op-minus { background: rgba(239,68,68,.15); color: #f87171; }
+    .op-times { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .op-divide { background: rgba(99,179,237,.15); color: #63b3ed; }
+    .db-pagination {
+      padding: .7rem 1.2rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+    }
+    .db-pg-info { font-size: .72rem; color: var(--muted); }
+    .db-pg-btn {
+      background: #1e293b; border: 1px solid #334155; color: var(--text);
+      padding: .2rem .6rem; border-radius: 5px; font-size: .72rem; cursor: pointer;
+    }
+    .db-pg-btn.active { background: #2563eb; border-color: #2563eb; }
+
+    /* Full-width PHP note */
+    .full-note {
+      max-width: 1100px; margin: 0 auto 3rem; padding: 0 2rem;
+    }
+    .full-note-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.5rem; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+    @media (max-width: 720px) { .full-note-box { grid-template-columns: 1fr; } }
+    .note-item h3 { color: var(--php); font-size: .85rem; margin-bottom: .6rem; text-transform: uppercase; letter-spacing: .08em; }
+    .note-item p { color: var(--muted); font-size: .85rem; line-height: 1.6; }
+    .note-item code { background: rgba(137,146,191,.1); color: var(--php); padding: .1rem .35rem; border-radius: 4px; font-size: .8rem; }
+
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      text-align: center; padding: 1.5rem; color: var(--muted); font-size: .82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="php-banner">🐘 PHP Project — <strong>WebLab · Dhruv Anand · CSE, Jain University</strong></div>
+  <a class="back-link" href="../index.html">← Back to Gallery</a>
+
+  <header>
+    <div class="label">🐘 PHP Calculator</div>
+    <h1>Calculator — Combined View</h1>
+    <p>Simple calculator UI + database history log (simulating PHP + MySQL)</p>
+  </header>
+
+  <div class="combined">
+    <!-- Simple Calculator -->
+    <div class="calc-panel">
+      <div class="panel-header">
+        <div class="dot" style="background:#ef4444"></div>
+        <div class="dot" style="background:#f59e0b"></div>
+        <div class="dot" style="background:#4ade80"></div>
+        <h2>PHP Calculator</h2>
+        <span class="tag">Simple</span>
+      </div>
+      <div class="simple-calc">
+        <div class="calc-display">
+          <div class="calc-history" id="calcHistory"></div>
+          <div class="calc-current" id="calcDisplay">0</div>
+        </div>
+        <div class="calc-buttons">
+          <button class="calc-btn clear wide" onclick="clearCalc()">AC</button>
+          <button class="calc-btn clear" onclick="backspace()">⌫</button>
+          <button class="calc-btn op" onclick="inputOp('/')">÷</button>
+          <button class="calc-btn" onclick="inputNum('7')">7</button>
+          <button class="calc-btn" onclick="inputNum('8')">8</button>
+          <button class="calc-btn" onclick="inputNum('9')">9</button>
+          <button class="calc-btn op" onclick="inputOp('*')">×</button>
+          <button class="calc-btn" onclick="inputNum('4')">4</button>
+          <button class="calc-btn" onclick="inputNum('5')">5</button>
+          <button class="calc-btn" onclick="inputNum('6')">6</button>
+          <button class="calc-btn op" onclick="inputOp('-')">−</button>
+          <button class="calc-btn" onclick="inputNum('1')">1</button>
+          <button class="calc-btn" onclick="inputNum('2')">2</button>
+          <button class="calc-btn" onclick="inputNum('3')">3</button>
+          <button class="calc-btn op" onclick="inputOp('+')">+</button>
+          <button class="calc-btn wide" onclick="inputNum('0')">0</button>
+          <button class="calc-btn" onclick="inputDecimal()">.</button>
+          <button class="calc-btn equals" onclick="calculate()">=</button>
+        </div>
+
+        <div class="php-snippet">
+          <span class="tag">&lt;?php</span>
+          <span class="cmt"> // Server-side calculation</span><br/>
+          <span class="kw">if</span>(<span class="var">$_POST</span>[<span class="str">'op'</span>] == <span class="str">'+'</span>)<br/>
+          &nbsp;&nbsp;<span class="var">$result</span> = <span class="var">$a</span> + <span class="var">$b</span>;<br/>
+          <span class="kw">elseif</span>(<span class="var">$_POST</span>[<span class="str">'op'</span>] == <span class="str">'/'</span> && <span class="var">$b</span> != 0)<br/>
+          &nbsp;&nbsp;<span class="var">$result</span> = <span class="var">$a</span> / <span class="var">$b</span>;<br/>
+          <span class="tag">?&gt;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DB History Panel -->
+    <div class="calc-panel db-panel">
+      <div class="panel-header">
+        <div class="dot" style="background:#ef4444"></div>
+        <div class="dot" style="background:#f59e0b"></div>
+        <div class="dot" style="background:#4ade80"></div>
+        <h2>phpMyAdmin — calc_history</h2>
+        <span class="tag">MySQL</span>
+      </div>
+      <div class="db-toolbar">
+        <span class="db-toolbar-label">Browse</span>
+        <select class="db-select"><option>calc_db</option></select>
+        <select class="db-select"><option>calc_history</option></select>
+        <button class="db-btn">▶ Run SQL</button>
+        <button class="db-btn" style="background:#16a34a" onclick="addDbEntry()">+ New</button>
+        <button class="db-btn" style="background:#7c3aed">⬇ Export</button>
+      </div>
+      <div class="db-flash" id="dbFlash" style="display:none">✓ Showing row 1 - 8 (8 total records)</div>
+      <div class="db-table-wrap">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th>#</th><th>id</th><th>num_a</th><th>op</th><th>num_b</th><th>result</th><th>created_at</th>
+            </tr>
+          </thead>
+          <tbody id="dbTableBody"></tbody>
+        </table>
+      </div>
+      <div class="db-pagination">
+        <span class="db-pg-info" id="dbPgInfo">8 rows total</span>
+        <button class="db-pg-btn active">1</button>
+        <button class="db-pg-btn">2</button>
+        <button class="db-pg-btn">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="full-note">
+    <div class="full-note-box">
+      <div class="note-item">
+        <h3>🐘 PHP Logic</h3>
+        <p>The calculator processes arithmetic via <code>$_POST</code> form submission. Each calculation is stored in MySQL using <code>mysqli_query()</code>. Division by zero is caught with a PHP conditional before executing.</p>
+      </div>
+      <div class="note-item">
+        <h3>🗄️ MySQL Schema</h3>
+        <p>Table <code>calc_history</code> stores every calculation: <code>id INT AUTO_INCREMENT</code>, <code>num_a FLOAT</code>, <code>op VARCHAR(1)</code>, <code>num_b FLOAT</code>, <code>result FLOAT</code>, <code>created_at TIMESTAMP</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>PHP Calculator · WebLab Project · Dhruv Anand — CSE, Jain University</footer>
+
+  <script>
+    // ===== Calculator Logic =====
+    let current = '0', prev = '', operator = '', shouldReset = false;
+    const display = document.getElementById('calcDisplay');
+    const history = document.getElementById('calcHistory');
+
+    function updateDisplay() { display.textContent = current.length > 10 ? parseFloat(current).toExponential(4) : current; }
+
+    function inputNum(n) {
+      if (shouldReset) { current = n; shouldReset = false; }
+      else current = current === '0' ? n : current + n;
+      updateDisplay();
+    }
+
+    function inputDecimal() {
+      if (shouldReset) { current = '0.'; shouldReset = false; }
+      else if (!current.includes('.')) current += '.';
+      updateDisplay();
+    }
+
+    function inputOp(op) {
+      if (operator && !shouldReset) calculate(true);
+      prev = current; operator = op; shouldReset = true;
+      history.textContent = prev + ' ' + opSymbol(op);
+    }
+
+    function opSymbol(op) { return {'+':'+','-':'−','*':'×','/':'÷'}[op] || op; }
+
+    function calculate(chain = false) {
+      if (!operator || !prev) return;
+      const a = parseFloat(prev), b = parseFloat(current);
+      let result;
+      if (operator === '+') result = a + b;
+      else if (operator === '-') result = a - b;
+      else if (operator === '*') result = a * b;
+      else if (operator === '/') result = b === 0 ? 'Error' : a / b;
+      const expr = `${a} ${opSymbol(operator)} ${b}`;
+      if (!chain) { history.textContent = expr + ' ='; addToDb(a, operator, b, result); }
+      current = String(result);
+      operator = ''; prev = ''; shouldReset = true;
+      updateDisplay();
+    }
+
+    function clearCalc() { current = '0'; prev = ''; operator = ''; history.textContent = ''; updateDisplay(); }
+
+    function backspace() {
+      if (current.length > 1) current = current.slice(0,-1);
+      else current = '0';
+      updateDisplay();
+    }
+
+    // ===== DB Panel Logic =====
+    let dbRows = [
+      {id:1, a:9, op:'+', b:9, r:18},
+      {id:2, a:45, op:'*', b:2, r:90},
+      {id:3, a:100, op:'/', b:4, r:25},
+      {id:4, a:81, op:'-', b:0, r:81},
+      {id:5, a:7, op:'+', b:8, r:15},
+      {id:6, a:12, op:'*', b:3, r:36},
+      {id:7, a:50, op:'/', b:5, r:10},
+      {id:8, a:99, op:'+', b:1, r:100},
+    ];
+
+    const opClass = {'+':'op-plus','-':'op-minus','*':'op-times','/':'op-divide'};
+    const opLabel = {'+':'+','-':'−','*':'×','/':'÷'};
+
+    function renderDb() {
+      const tbody = document.getElementById('dbTableBody');
+      tbody.innerHTML = dbRows.map((r,i) => `
+        <tr>
+          <td><input type="checkbox" style="accent-color:#2563eb"></td>
+          <td>${r.id}</td>
+          <td>${r.a}</td>
+          <td><span class="op-badge ${opClass[r.op]}">${opLabel[r.op]}</span></td>
+          <td>${r.b}</td>
+          <td><strong>${r.r}</strong></td>
+          <td style="color:var(--muted)">${getTime(i)}</td>
+        </tr>
+      `).join('');
+      document.getElementById('dbPgInfo').textContent = dbRows.length + ' rows total';
+    }
+
+    function getTime(offset) {
+      const d = new Date(Date.now() - offset * 60000 * 5);
+      return d.toISOString().replace('T',' ').slice(0,19);
+    }
+
+    function addToDb(a, op, b, result) {
+      const newId = dbRows.length + 1;
+      dbRows.unshift({id:newId, a, op, b, r: typeof result === 'number' ? Math.round(result*1000)/1000 : result});
+      if (dbRows.length > 10) dbRows.pop();
+      const flash = document.getElementById('dbFlash');
+      flash.style.display = 'block';
+      flash.textContent = `✓ INSERT INTO calc_history — row added (${dbRows.length} total)`;
+      renderDb();
+    }
+
+    function addDbEntry() {
+      inputNum(String(Math.floor(Math.random()*50)+1));
+      inputOp(['+','-','*','/'][Math.floor(Math.random()*4)]);
+      inputNum(String(Math.floor(Math.random()*20)+1));
+      calculate();
+    }
+
+    renderDb();
+  </script>
+</body>
+</html>

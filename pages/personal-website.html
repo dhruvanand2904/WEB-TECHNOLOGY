@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dhruv Anand — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f5f0e8; --dark: #1a1a2e; --accent: #e63946;
+      --gold: #f4a261; --text: #333;
+    }
+    body { background: var(--cream); color: var(--text); font-family: 'Lato', sans-serif; }
+    a { color: var(--accent); text-decoration: none; }
+    .back { display: inline-block; margin: 1rem 2rem; font-size: 0.85rem; color: var(--text); opacity: .6; }
+    .back:hover { opacity: 1; }
+
+    /* Hero */
+    .hero {
+      background: var(--dark);
+      color: white;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(230,57,70,0.3) 0%, transparent 70%);
+    }
+    .hero img {
+      width: 110px; height: 110px;
+      border-radius: 50%; border: 3px solid var(--gold);
+      position: relative; z-index:1; margin-bottom:1.2rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      position: relative; z-index:1;
+    }
+    .hero p { color: rgba(255,255,255,.65); margin-top:.5rem; position:relative;z-index:1; }
+    .hero .tags { display:flex; gap:.6rem; justify-content:center; margin-top:1.2rem; flex-wrap:wrap; position:relative;z-index:1; }
+    .hero .tags span {
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2);
+      padding: .3rem .9rem; border-radius: 99px; font-size:.8rem;
+    }
+
+    /* Sections */
+    section { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; margin-bottom: 1.5rem;
+      position: relative; display: inline-block;
+    }
+    h2::after {
+      content:''; position:absolute; left:0; bottom:-6px;
+      width:40px; height:3px; background: var(--accent); border-radius:2px;
+    }
+
+    /* Skills */
+    .skills { display:flex; flex-wrap:wrap; gap:.8rem; }
+    .skill {
+      background: white; border: 1px solid #e0e0e0;
+      padding: .5rem 1.1rem; border-radius:8px;
+      font-size:.9rem; font-weight:700;
+      box-shadow: 2px 2px 0 var(--accent);
+    }
+
+    /* Projects */
+    .projects { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:1.5rem; }
+    .project-card {
+      background:white; border-radius:12px; padding:1.5rem;
+      border: 1px solid #e0e0e0;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .project-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    .project-card h3 { font-size:1rem; margin-bottom:.5rem; }
+    .project-card p { font-size:.85rem; color:#666; }
+    .project-card .tech { margin-top:.8rem; font-size:.75rem; color:var(--accent); font-weight:700; }
+
+    /* Timeline */
+    .timeline { border-left: 3px solid var(--accent); padding-left:2rem; }
+    .timeline-item { margin-bottom:2rem; position:relative; }
+    .timeline-item::before {
+      content:''; position:absolute; left:-2.5rem; top:4px;
+      width:12px; height:12px; border-radius:50%; background:var(--accent);
+      border:2px solid var(--cream);
+    }
+    .timeline-item h3 { font-size:1rem; }
+    .timeline-item .company { color:var(--accent); font-size:.85rem; font-weight:700; margin:.2rem 0; }
+    .timeline-item p { font-size:.85rem; color:#666; }
+
+    /* Contact */
+    .contact-links { display:flex; gap:1.2rem; flex-wrap:wrap; margin-top:1rem; }
+    .contact-link {
+      display:flex; align-items:center; gap:.5rem;
+      background:var(--dark); color:white;
+      padding:.6rem 1.3rem; border-radius:8px; font-size:.9rem;
+      transition: background .2s;
+    }
+    .contact-link:hover { background:var(--accent); color:white; }
+
+    footer { background:var(--dark); color:rgba(255,255,255,.4); text-align:center; padding:1.5rem; font-size:.8rem; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../index.html">← Back to Gallery</a>
+
+  <div class="hero">
+    <img src="https://api.dicebear.com/7.x/personas/svg?seed=Dhruv" alt="Dhruv Anand"/>
+    <h1>Dhruv Anand</h1>
+    <p>Computer Science & Engineering · Jain University, Bangalore</p>
+    <div class="tags">
+      <span>2nd Year CSE</span>
+      <span>Open to Work</span>
+      <span>PHP · MySQL · Web Dev</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>About Me</h2>
+    <p style="line-height:1.8; max-width:600px;">Hi! I'm Dhruv, a Computer Science & Engineering student at Jain University, Bangalore. I'm passionate about building web applications with PHP and modern web technologies. I love solving problems and turning ideas into real, working projects.</p>
+  </section>
+
+  <section style="background:white; max-width:100%; padding:3rem 0;">
+    <div style="max-width:900px;margin:0 auto;padding:0 2rem;">
+      <h2>Skills</h2>
+      <div class="skills">
+        <span class="skill">HTML5</span><span class="skill">CSS3</span>
+        <span class="skill">JavaScript</span><span class="skill">PHP</span>
+        <span class="skill">React</span><span class="skill">MySQL</span>
+        <span class="skill">Apache/XAMPP</span><span class="skill">Bootstrap</span>
+        <span class="skill">C / C++</span><span class="skill">Python</span>
+        <span class="skill">Laravel (Basics)</span><span class="skill">Git</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="projects">
+      <div class="project-card">
+        <h3>🌐 PHP Personal Website</h3>
+        <p>Dynamic PHP-powered portfolio with server-side rendering and MySQL backend.</p>
+        <div class="tech">PHP · MySQL · CSS</div>
+      </div>
+      <div class="project-card">
+        <h3>🛒 PHP E-Commerce</h3>
+        <p>Online store with product listings, cart sessions, and checkout flow using PHP.</p>
+        <div class="tech">PHP · MySQL · Bootstrap</div>
+      </div>
+      <div class="project-card">
+        <h3>🧮 PHP Calculator</h3>
+        <p>Server-side calculator that logs every operation into a MySQL database table.</p>
+        <div class="tech">PHP · MySQL · XAMPP</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:white; max-width:100%; padding:3rem 0;">
+    <div style="max-width:900px;margin:0 auto;padding:0 2rem;">
+      <h2>Education &amp; Experience</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <h3>B.Tech — Computer Science & Engineering</h3>
+          <div class="company">Jain University, Bangalore · 2023 – Present</div>
+          <p>Studying core CS subjects alongside web development, DBMS, OOP, and software engineering principles. Building PHP-based projects.</p>
+        </div>
+        <div class="timeline-item">
+          <h3>Web Development Intern (Trainee)</h3>
+          <div class="company">WebTech Solutions · 2024 (Summer)</div>
+          <p>Worked on PHP backend tasks, MySQL queries, and learned real-world web application architecture.</p>
+        </div>
+        <div class="timeline-item">
+          <h3>Higher Secondary (12th Grade)</h3>
+          <div class="company">Science with CS · 2021 – 2023</div>
+          <p>Science stream with Mathematics and Computer Science. Developed early interest in programming and web technologies.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p style="color:#666; margin-bottom:1rem;">Let's build something great together.</p>
+    <div class="contact-links">
+      <a class="contact-link" href="#">📧 dhruv.anand@jainuniversity.ac.in</a>
+      <a class="contact-link" href="#">🐙 github.com/dhruvanand</a>
+      <a class="contact-link" href="#">💼 linkedin.com/in/dhruvanand</a>
+    </div>
+  </section>
+
+  <footer>&copy; 2024 Dhruv Anand — All rights reserved.</footer>
+</body>
+</html>

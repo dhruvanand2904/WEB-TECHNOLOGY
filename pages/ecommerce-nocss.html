@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ShopSimple — E-Commerce (No CSS)</title>
+</head>
+<body>
+  <a href="../index.html">← Back to Gallery</a>
+  <hr/>
+  <h1>ShopSimple Store</h1>
+  <p>Your one-stop online shop</p>
+
+  <nav>
+    <a href="#">Home</a> |
+    <a href="#">Products</a> |
+    <a href="#">Cart (3)</a> |
+    <a href="#">Account</a>
+  </nav>
+  <hr/>
+
+  <h2>Featured Products</h2>
+
+  <h3>Wireless Headphones</h3>
+  <p>Price: <strong>$79.99</strong></p>
+  <p>High-quality sound, 30-hour battery, noise cancellation.</p>
+  <p>Rating: ⭐⭐⭐⭐⭐ (128 reviews)</p>
+  <p>Stock: In Stock</p>
+  <button onclick="alert('Added to cart!')">Add to Cart</button>
+  <hr/>
+
+  <h3>Mechanical Keyboard</h3>
+  <p>Price: <strong>$129.99</strong></p>
+  <p>RGB backlit, tactile switches, compact tenkeyless layout.</p>
+  <p>Rating: ⭐⭐⭐⭐ (84 reviews)</p>
+  <p>Stock: In Stock</p>
+  <button onclick="alert('Added to cart!')">Add to Cart</button>
+  <hr/>
+
+  <h3>USB-C Hub (7-in-1)</h3>
+  <p>Price: <strong>$39.99</strong></p>
+  <p>HDMI, 3× USB-A, SD card, power delivery passthrough.</p>
+  <p>Rating: ⭐⭐⭐⭐ (201 reviews)</p>
+  <p>Stock: Only 5 left!</p>
+  <button onclick="alert('Added to cart!')">Add to Cart</button>
+  <hr/>
+
+  <h2>Your Cart</h2>
+  <table border="1" cellpadding="6">
+    <thead>
+      <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Wireless Headphones</td><td>1</td><td>$79.99</td><td>$79.99</td></tr>
+      <tr><td>Mechanical Keyboard</td><td>1</td><td>$129.99</td><td>$129.99</td></tr>
+      <tr><td>USB-C Hub</td><td>1</td><td>$39.99</td><td>$39.99</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="3"><strong>Total</strong></td><td><strong>$249.97</strong></td></tr>
+    </tfoot>
+  </table>
+  <br/>
+  <button onclick="alert('Proceeding to checkout!')">Checkout</button>
+  <button onclick="alert('Cart cleared!')">Clear Cart</button>
+
+  <hr/>
+  <h2>Search Products</h2>
+  <input type="text" placeholder="Search..."/>
+  <button>Search</button>
+
+  <hr/>
+  <p><small>&copy; 2024 ShopSimple. All rights reserved.</small></p>
+</body>
+</html>

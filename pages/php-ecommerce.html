@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Late Latif — PHP E-Commerce</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f9fa; --dark: #111; --accent: #e11d48;
+      --php: #8892BF; --php-dark: #4F5B93; --border: #e5e7eb; --gold: #f59e0b;
+    }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--dark); }
+
+    .php-banner {
+      background: linear-gradient(90deg, var(--php-dark), #6c7ab5);
+      color: white; text-align: center; padding: .4rem 1rem;
+      font-size: .78rem; letter-spacing: .1em;
+    }
+    .php-banner strong { color: #c9d8f0; }
+
+    nav {
+      background: white; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 2rem; position: sticky; top: 0; z-index: 99;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+    .nav-logo { display: flex; align-items: center; gap: .6rem; }
+    .nav-logo .logo-icon { font-size: 1.5rem; }
+    .nav-logo .logo-text { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+    .nav-logo .logo-sub { font-size: .72rem; color: #888; display: block; line-height: 1; }
+    nav .nav-links { display: flex; gap: 1.5rem; }
+    nav .nav-links a { text-decoration: none; color: #555; font-size: .9rem; font-weight: 500; }
+    nav .nav-links a:hover { color: var(--accent); }
+    .cart-btn {
+      background: var(--accent); color: white; border: none;
+      padding: .5rem 1.2rem; border-radius: 8px; cursor: pointer;
+      font-family: inherit; font-weight: 700; font-size: .85rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .cart-count {
+      background: white; color: var(--accent);
+      width: 18px; height: 18px; border-radius: 50%;
+      font-size: .7rem; display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+    .back-link { display: inline-block; padding: .5rem 2rem; font-size: .85rem; color: #888; text-decoration: none; }
+    .back-link:hover { color: var(--accent); }
+
+    /* Hero Banner */
+    .banner {
+      background: linear-gradient(135deg, #0f172a 0%, #be123c 100%);
+      color: white; padding: 3.5rem 2rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .sale-badge {
+      position: absolute; top: 1.5rem; right: 2rem;
+      background: var(--gold); color: var(--dark);
+      font-weight: 700; font-size: .8rem; padding: .4rem .8rem; border-radius: 6px;
+      transform: rotate(8deg);
+    }
+    .sale-badges {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .sale-badges span {
+      position: absolute; background: rgba(245,158,11,.85); color: #000;
+      font-weight: 800; font-size: .85rem; padding: .4rem .8rem;
+      border-radius: 6px; transform: rotate(-15deg); letter-spacing: .05em;
+    }
+    .sale-badges span:nth-child(1) { top: 10%; left: 3%; transform: rotate(-12deg); }
+    .sale-badges span:nth-child(2) { top: 25%; right: 4%; transform: rotate(10deg); }
+    .sale-badges span:nth-child(3) { bottom: 15%; left: 8%; transform: rotate(8deg); }
+    .sale-badges span:nth-child(4) { bottom: 10%; right: 10%; transform: rotate(-8deg); }
+    .banner h1 { font-size: clamp(1.8rem,4vw,3rem); margin-bottom: .5rem; position: relative; z-index: 1; }
+    .banner p { opacity: .8; font-size: 1rem; position: relative; z-index: 1; }
+    .banner .cta {
+      display: inline-block; margin-top: 1.5rem; background: white; color: var(--accent);
+      padding: .7rem 2rem; border-radius: 8px; font-weight: 700; text-decoration: none;
+      transition: transform .2s; position: relative; z-index: 1;
+    }
+    .banner .cta:hover { transform: scale(1.04); }
+
+    /* PHP note */
+    .php-note {
+      background: #f0f2ff; border-left: 4px solid var(--php-dark);
+      padding: .8rem 1.5rem; margin: 1.5rem 2rem;
+      border-radius: 0 8px 8px 0; font-size: .85rem; color: var(--php-dark);
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .php-note code {
+      background: white; padding: .1rem .4rem; border-radius: 4px;
+      font-size: .8rem; border: 1px solid #c7d0f0;
+    }
+
+    /* Products */
+    .products-section { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: .6rem; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 1.5rem; }
+    .product-card {
+      background: white; border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border); transition: transform .2s, box-shadow .2s;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+    .product-img {
+      height: 160px; display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      position: relative;
+    }
+    .product-badge {
+      position: absolute; top: .6rem; left: .6rem;
+      background: var(--accent); color: white;
+      font-size: .65rem; font-weight: 700; padding: .2rem .5rem; border-radius: 4px;
+    }
+    .product-body { padding: 1rem; }
+    .product-name { font-weight: 700; font-size: .95rem; margin-bottom: .3rem; }
+    .product-price { display: flex; align-items: center; gap: .6rem; margin: .5rem 0; }
+    .price-now { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+    .price-old { font-size: .85rem; color: #aaa; text-decoration: line-through; }
+    .add-btn {
+      width: 100%; background: var(--dark); color: white; border: none;
+      padding: .55rem; border-radius: 8px; font-family: inherit;
+      font-weight: 700; font-size: .85rem; cursor: pointer; transition: background .2s;
+    }
+    .add-btn:hover { background: var(--accent); }
+    .add-btn.added { background: #16a34a; }
+
+    /* Cart sidebar */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-sidebar {
+      position: fixed; right: 0; top: 0; bottom: 0; width: 360px;
+      background: white; z-index: 201; transform: translateX(100%);
+      transition: transform .3s; display: flex; flex-direction: column;
+      box-shadow: -8px 0 32px rgba(0,0,0,.15);
+    }
+    .cart-sidebar.open { transform: translateX(0); }
+    .cart-header {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cart-header h3 { font-size: 1.1rem; }
+    .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #555; }
+    .cart-items { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+    .cart-empty { text-align: center; padding: 3rem 1rem; color: #aaa; }
+    .cart-item {
+      display: flex; gap: 1rem; align-items: center;
+      padding: .8rem 0; border-bottom: 1px solid var(--border);
+    }
+    .cart-item-icon { font-size: 2rem; width: 48px; text-align: center; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-weight: 600; font-size: .9rem; }
+    .cart-item-price { color: var(--accent); font-size: .85rem; font-weight: 700; }
+    .cart-item-remove { background: none; border: none; cursor: pointer; color: #aaa; font-size: 1rem; }
+    .cart-item-remove:hover { color: var(--accent); }
+    .cart-footer { padding: 1.2rem 1.5rem; border-top: 1px solid var(--border); }
+    .cart-total { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.05rem; margin-bottom: 1rem; }
+    .checkout-btn {
+      width: 100%; background: var(--accent); color: white; border: none;
+      padding: .75rem; border-radius: 8px; font-family: inherit;
+      font-weight: 700; font-size: 1rem; cursor: pointer;
+    }
+
+    /* PHP session note */
+    .session-note {
+      max-width: 1200px; margin: 0 auto 2rem; padding: 0 2rem;
+    }
+    .session-box {
+      background: #1e1e3f; border-radius: 10px; padding: 1rem 1.5rem;
+      font-family: 'Courier New', monospace; font-size: .8rem; color: #c9d8f0;
+    }
+    .session-box .php-tag { color: #a78bfa; }
+    .session-box .var { color: #7dd3fc; }
+    .session-box .str { color: #86efac; }
+    .session-box .comment { color: #4b5563; font-style: italic; }
+
+    footer {
+      background: var(--dark); color: rgba(255,255,255,.4);
+      text-align: center; padding: 1.5rem; font-size: .8rem; margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="php-banner">🐘 PHP Project — <strong>WebLab · Dhruv Anand · CSE, Jain University</strong></div>
+  <a class="back-link" href="../index.html">← Back to Gallery</a>
+
+  <nav>
+    <div class="nav-logo">
+      <span class="logo-icon">🛒</span>
+      <div>
+        <span class="logo-text">Late Latif</span>
+        <span class="logo-sub">Your online shop</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Groceries</a>
+      <a href="#">Daily Use</a>
+      <a href="#">Special Fest</a>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">
+      🛍️ Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </nav>
+
+  <div class="banner">
+    <div class="sale-badges">
+      <span>SALE!</span><span>SALE!</span><span>SALE!</span><span>SALE!</span>
+    </div>
+    <h1>Welcome to Late Latif</h1>
+    <p>Your best shop for groceries, Daily life, and Special Festivals</p>
+    <a href="#" class="cta">Shop Now →</a>
+  </div>
+
+  <div class="php-note">
+    🐘 <span>PHP Backend: Products fetched via <code>mysqli_fetch_assoc()</code>, cart managed using <code>$_SESSION['cart']</code></span>
+  </div>
+
+  <div class="products-section">
+    <div class="section-title">🛍️ Featured Products</div>
+    <div class="products-grid" id="productsGrid">
+      <!-- products injected by JS simulating PHP echo -->
+    </div>
+  </div>
+
+  <div class="session-note">
+    <div class="session-box">
+      <span class="php-tag">&lt;?php</span>
+      <span class="comment"> // Cart session logic</span><br/>
+      <span class="comment">session_start();</span><br/>
+      <span class="var">$_SESSION</span>[<span class="str">'cart'</span>][] = [<span class="str">'id'</span> =&gt; <span class="var">$product_id</span>, <span class="str">'qty'</span> =&gt; 1];<br/>
+      <span class="php-tag">?&gt;</span>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>🛍️ Your Cart</h3>
+      <button class="close-btn" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span><span id="cartTotal">₹0.00</span>
+      </div>
+      <button class="checkout-btn" onclick="alert('✅ Order placed! (PHP would process via POST)')">Checkout →</button>
+    </div>
+  </div>
+
+  <footer>Late Latif E-Commerce · PHP Project · Dhruv Anand, CSE — Jain University</footer>
+
+  <script>
+    const products = [
+      { id:1, name:"Fresh Vegetables Pack", icon:"🥦", price:149, old:199, badge:"Fresh" },
+      { id:2, name:"Basmati Rice 5kg", icon:"🍚", price:399, old:499, badge:"Popular" },
+      { id:3, name:"Cooking Oil 1L", icon:"🫙", price:180, old:220, badge:"Sale" },
+      { id:4, name:"Festival Sweets Box", icon:"🍬", price:350, old:450, badge:"Special" },
+      { id:5, name:"Daily Milk 1L", icon:"🥛", price:65, old:75, badge:"" },
+      { id:6, name:"Atta Flour 10kg", icon:"🌾", price:320, old:380, badge:"Deal" },
+      { id:7, name:"Spices Combo Pack", icon:"🌶️", price:249, old:300, badge:"Combo" },
+      { id:8, name:"Diwali Gift Hamper", icon:"🎁", price:999, old:1299, badge:"Festive" },
+    ];
+
+    let cart = [];
+
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = products.map(p => `
+        <div class="product-card">
+          <div class="product-img">
+            ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+            ${p.icon}
+          </div>
+          <div class="product-body">
+            <div class="product-name">${p.name}</div>
+            <div class="product-price">
+              <span class="price-now">₹${p.price}</span>
+              <span class="price-old">₹${p.old}</span>
+            </div>
+            <button class="add-btn" id="btn${p.id}" onclick="addToCart(${p.id})">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) { existing.qty++; } else { cart.push({...product, qty:1}); }
+      const btn = document.getElementById('btn' + id);
+      btn.textContent = '✓ Added'; btn.classList.add('added');
+      setTimeout(() => { btn.textContent = 'Add to Cart'; btn.classList.remove('added'); }, 1000);
+      renderCart();
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(c => c.id !== id);
+      renderCart();
+    }
+
+    function renderCart() {
+      document.getElementById('cartCount').textContent = cart.reduce((s,c) => s+c.qty, 0);
+      const total = cart.reduce((s,c) => s + c.price * c.qty, 0);
+      document.getElementById('cartTotal').textContent = '₹' + total.toFixed(2);
+      const el = document.getElementById('cartItems');
+      if (!cart.length) {
+        el.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+      } else {
+        el.innerHTML = cart.map(c => `
+          <div class="cart-item">
+            <div class="cart-item-icon">${c.icon}</div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">${c.name}</div>
+              <div class="cart-item-price">₹${c.price} × ${c.qty}</div>
+            </div>
+            <button class="cart-item-remove" onclick="removeFromCart(${c.id})">✕</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function toggleCart() {
+      document.getElementById('cartSidebar').classList.toggle('open');
+      document.getElementById('cartOverlay').classList.toggle('open');
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>

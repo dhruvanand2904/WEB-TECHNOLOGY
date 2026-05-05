@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Calculator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #f0f4f8; font-family: monospace;
+    }
+    .back { position:fixed; top:1rem; left:1rem; font-size:.85rem; color:#666; text-decoration:none; }
+    .back:hover { color:#333; }
+    .calc {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 32px rgba(0,0,0,.12);
+      width: 280px;
+    }
+    .display {
+      background: #1e293b; color: white;
+      border-radius: 10px; padding: 1rem 1.2rem;
+      text-align: right; margin-bottom: 1rem;
+    }
+    .display .expr { font-size: .75rem; color: #94a3b8; min-height: 1rem; }
+    .display .value { font-size: 2rem; font-weight: bold; word-break: break-all; }
+    .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+    button {
+      padding: 1rem; border: none; border-radius: 8px;
+      font-size: 1rem; font-family: monospace; font-weight: bold;
+      cursor: pointer; transition: transform .1s, opacity .1s;
+    }
+    button:active { transform: scale(.95); opacity: .8; }
+    .btn-num { background: #f1f5f9; color: #1e293b; }
+    .btn-op { background: #dbeafe; color: #2563eb; }
+    .btn-eq { background: #2563eb; color: white; grid-column: span 2; }
+    .btn-clear { background: #fee2e2; color: #dc2626; }
+    .btn-zero { grid-column: span 2; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../index.html">← Back</a>
+  <div class="calc">
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="value" id="display">0</div>
+    </div>
+    <div class="buttons">
+      <button class="btn-clear" onclick="clearAll()">AC</button>
+      <button class="btn-op" onclick="toggleSign()">+/-</button>
+      <button class="btn-op" onclick="percent()">%</button>
+      <button class="btn-op" onclick="op('/')">÷</button>
+
+      <button class="btn-num" onclick="num(7)">7</button>
+      <button class="btn-num" onclick="num(8)">8</button>
+      <button class="btn-num" onclick="num(9)">9</button>
+      <button class="btn-op" onclick="op('*')">×</button>
+
+      <button class="btn-num" onclick="num(4)">4</button>
+      <button class="btn-num" onclick="num(5)">5</button>
+      <button class="btn-num" onclick="num(6)">6</button>
+      <button class="btn-op" onclick="op('-')">−</button>
+
+      <button class="btn-num" onclick="num(1)">1</button>
+      <button class="btn-num" onclick="num(2)">2</button>
+      <button class="btn-num" onclick="num(3)">3</button>
+      <button class="btn-op" onclick="op('+')">+</button>
+
+      <button class="btn-num btn-zero" onclick="num(0)">0</button>
+      <button class="btn-num" onclick="dot()">.</button>
+      <button class="btn-eq" onclick="equals()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let current = '0', prevValue = null, operator = null, fresh = false;
+    const disp = () => document.getElementById('display').textContent = current.length > 10 ? parseFloat(current).toPrecision(8) : current;
+    const expr = (t) => document.getElementById('expr').textContent = t;
+
+    function num(n) {
+      if (fresh) { current = ''; fresh = false; }
+      current = current === '0' ? String(n) : current + n;
+      disp();
+    }
+    function dot() {
+      if (fresh) { current = '0'; fresh = false; }
+      if (!current.includes('.')) current += '.';
+      disp();
+    }
+    function clearAll() {
+      current = '0'; prevValue = null; operator = null; fresh = false;
+      disp(); expr('');
+    }
+    function toggleSign() { current = String(-parseFloat(current)); disp(); }
+    function percent() { current = String(parseFloat(current) / 100); disp(); }
+    function op(o) {
+      prevValue = parseFloat(current);
+      operator = o;
+      fresh = true;
+      expr(`${prevValue} ${o === '*' ? '×' : o === '/' ? '÷' : o}`);
+    }
+    function equals() {
+      if (operator === null || prevValue === null) return;
+      const b = parseFloat(current);
+      let result;
+      if (operator === '+') result = prevValue + b;
+      else if (operator === '-') result = prevValue - b;
+      else if (operator === '*') result = prevValue * b;
+      else if (operator === '/') result = b !== 0 ? prevValue / b : 'Error';
+      expr(`${prevValue} ${operator === '*' ? '×' : operator === '/' ? '÷' : operator} ${b} =`);
+      current = String(result);
+      operator = null; prevValue = null; fresh = true;
+      disp();
+    }
+  </script>
+</body>
+</html>
