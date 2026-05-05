@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebLab — Project Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #21262d;
+      --accent: #00d4ff;
+      --accent2: #ff6b35;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,212,255,0.07) 0%, transparent 60%),
+                  radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,107,53,0.06) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    header {
+      position: relative; z-index: 1;
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    header .label {
+      display: inline-block;
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); background: rgba(0,212,255,0.08);
+      padding: 0.3rem 1rem; border-radius: 99px;
+      border: 1px solid rgba(0,212,255,0.2);
+      margin-bottom: 1.2rem;
+    }
+    header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800; line-height: 1.1;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    header p {
+      color: var(--muted); font-size: 1.05rem; margin-top: 0.8rem;
+    }
+    .grid {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px; margin: 3rem auto; padding: 0 2rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 0.8rem;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      cursor: pointer; text-decoration: none; color: inherit;
+      animation: fadeUp 0.5s ease both;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 40px rgba(0,212,255,0.12);
+    }
+    .card:nth-child(1){animation-delay:.05s} .card:nth-child(2){animation-delay:.1s}
+    .card:nth-child(3){animation-delay:.15s} .card:nth-child(4){animation-delay:.2s}
+    .card:nth-child(5){animation-delay:.25s} .card:nth-child(6){animation-delay:.3s}
+    .card:nth-child(7){animation-delay:.35s} .card:nth-child(8){animation-delay:.4s}
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .card .icon { font-size: 2.8rem; line-height: 1; }
+    .card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+    }
+    .card p { font-size: 0.9rem; color: var(--muted); }
+    .card .tag {
+      font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.2rem 0.7rem; border-radius: 99px;
+      background: rgba(0,212,255,0.08); color: var(--accent);
+      border: 1px solid rgba(0,212,255,0.15);
+    }
+    .btn {
+      margin-top: auto;
+      display: inline-block;
+      background: var(--accent); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.85rem; padding: 0.55rem 1.6rem;
+      border-radius: 99px; text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn:hover { background: #33ddff; transform: scale(1.05); }
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 2rem;
+      color: var(--muted); font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="label">WebLab Projects</div>
+    <h1>Project Gallery</h1>
+    <p>11 web projects — from bare HTML to PHP + MySQL · <strong style="color:var(--accent)">Dhruv Anand</strong> · CSE, Jain University</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="pages/personal-website-nocss.html">
+      <div class="icon">💻</div>
+      <span class="tag">HTML only</span>
+      <h2>Personal Website (No CSS)</h2>
+      <p>Basic HTML profile page. Pure structure, zero styling.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/ecommerce-nocss.html">
+      <div class="icon">🛒</div>
+      <span class="tag">HTML only</span>
+      <h2>E-Commerce (No CSS)</h2>
+      <p>Simple shopping site. Semantic HTML cart & products.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/personal-website.html">
+      <div class="icon">🌐</div>
+      <span class="tag">Styled</span>
+      <h2>Personal Website</h2>
+      <p>Styled portfolio page with sections & design polish.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/ecommerce-website.html">
+      <div class="icon">🛍️</div>
+      <span class="tag">Full UI</span>
+      <h2>E-Commerce Website</h2>
+      <p>Products & cart features with a modern storefront.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/simple-calculator.html">
+      <div class="icon">🧮</div>
+      <span class="tag">Interactive</span>
+      <h2>Simple Calculator</h2>
+      <p>Basic operations. Clean numeric input & display.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/advanced-calculator.html">
+      <div class="icon">⚡</div>
+      <span class="tag">Interactive</span>
+      <h2>Advanced Calculator</h2>
+      <p>Styled calculator UI with scientific functions.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/registration-form.html">
+      <div class="icon">📋</div>
+      <span class="tag">Form</span>
+      <h2>Registration Form</h2>
+      <p>Full registration form with tabular data display.</p>
+      <span class="btn">Open</span>
+    </a>
+    <a class="card" href="pages/student-marketplace.html">
+      <div class="icon">👨‍💻</div>
+      <span class="tag">Marketplace</span>
+      <h2>Student Marketplace</h2>
+      <p>Students list and market their products & services.</p>
+      <span class="btn">Open</span>
+    </a>
+
+    <!-- PHP Section -->
+    <a class="card" href="pages/php-personal-web.html" style="border-color: rgba(137,146,191,0.4);">
+      <div class="icon">🐘</div>
+      <span class="tag" style="color:#8892BF;background:rgba(137,146,191,0.1);border-color:rgba(137,146,191,0.3);">PHP</span>
+      <h2>PHP Personal Web</h2>
+      <p>Dynamic PHP portfolio for Dhruv Anand — server-side rendered with MySQL.</p>
+      <span class="btn" style="background:#4F5B93">Open</span>
+    </a>
+    <a class="card" href="pages/php-ecommerce.html" style="border-color: rgba(137,146,191,0.4);">
+      <div class="icon">🛒</div>
+      <span class="tag" style="color:#8892BF;background:rgba(137,146,191,0.1);border-color:rgba(137,146,191,0.3);">PHP</span>
+      <h2>PHP E-Commerce</h2>
+      <p>Late Latif online store — PHP cart sessions, product listings & checkout.</p>
+      <span class="btn" style="background:#4F5B93">Open</span>
+    </a>
+    <a class="card" href="pages/php-calculator.html" style="border-color: rgba(137,146,191,0.4);">
+      <div class="icon">🧮</div>
+      <span class="tag" style="color:#8892BF;background:rgba(137,146,191,0.1);border-color:rgba(137,146,191,0.3);">PHP</span>
+      <h2>PHP Calculator</h2>
+      <p>Calculator UI + live phpMyAdmin DB view — combined PHP & MySQL demo.</p>
+      <span class="btn" style="background:#4F5B93">Open</span>
+    </a>
+  </div>
+
+  <footer>
+    WebLab · 11 Projects · Dhruv Anand — CSE, Jain University · Built for GitHub Pages
+  </footer>
+</body>
+</html>
